@@ -1,8 +1,4 @@
-package de.hbrs.ia.code;
-import de.hbrs.ia.solutions.model.SalesMan;
-import de.hbrs.ia.solutions.model.SocialPerformanceRecord;
-
-import java.util.List;
+package org.hbrs.ia.code;
 
 /**
  * Code lines are commented for suppressing compile errors.

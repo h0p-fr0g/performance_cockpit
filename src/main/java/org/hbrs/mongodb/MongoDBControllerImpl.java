@@ -1,4 +1,4 @@
-package org.hbrs.se.ws24;
+package org.hbrs.mongodb;
 
 import com.mongodb.client.model.Filters;
 import java.util.ArrayList;
@@ -10,7 +10,12 @@ import org.bson.Document;
 
 public class MongoDBControllerImpl implements MongoDBControllerInterface {
 
+    // Diese Konstanten bitte individuelle setzen, damit Ihre Daten in einer
+    // eigenen Kollektion (in SQL: Tabelle) abgespeichert wird.
+    // Beispiel: demostory_alda
     private static final String MONGODB_COLLECTION = "demostory";
+
+    // Andere Konstanten (hier nichts ändern!)
     private static final String MONGODB_HOST = "iar-mongo.inf.h-brs.de";
     private static final int MONGODB_PORT = 27017;
     private static final String MONGODB_DATABASE = "demo";

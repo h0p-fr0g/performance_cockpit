@@ -1,4 +1,4 @@
-package de.hbrs.ia.model;
+package org.hbrs.ia.model;
 
 import org.bson.Document;
 

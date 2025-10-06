@@ -1,4 +1,4 @@
-package org.hbrs.se.ws24;
+package org.hbrs.mongodb;
 
 import java.util.ArrayList;
 
