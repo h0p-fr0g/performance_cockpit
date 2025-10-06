@@ -1,9 +1,9 @@
-package test;
+package org.hbrs.mongodb.test;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import de.hbrs.ia.model.SalesMan;
+import org.hbrs.ia.model.SalesMan;
 import org.bson.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
