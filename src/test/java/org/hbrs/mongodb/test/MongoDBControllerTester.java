@@ -1,9 +1,8 @@
-package org.hbrs.se.ws24.test;
+package org.hbrs.mongodb.test;
 
-import org.hbrs.se.ws24.MongoDBControllerImpl;
-import org.hbrs.se.ws24.MongoDBControllerInterface;
-import org.hbrs.se.ws24.MongoDBControllerImpl;
-import org.hbrs.se.ws24.UserStory;
+import org.hbrs.mongodb.MongoDBControllerImpl;
+import org.hbrs.mongodb.MongoDBControllerInterface;
+import org.hbrs.mongodb.UserStory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
