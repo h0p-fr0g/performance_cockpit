@@ -54,6 +54,11 @@ public class SalesMan {
         return performanceRecords;
     }
 
+    public SocialPerformanceRecord getPerformanceRecordByYear(int year) {
+
+        return performanceRecords.stream().filter(r -> r.getYear() == year).findFirst().orElse(null);
+    }
+
     public void setPerformanceRecords(List<SocialPerformanceRecord> performanceRecords) {
         this.performanceRecords = performanceRecords;
     }
