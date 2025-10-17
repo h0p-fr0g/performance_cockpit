@@ -13,7 +13,6 @@ import org.hbrs.ia.code.ManagePersonal;
 import org.hbrs.ia.model.SalesMan;
 import org.hbrs.ia.model.SocialPerformanceRecord;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 
@@ -62,9 +61,9 @@ public class ManagePersonalImplementation implements ManagePersonal {
         );
     }
 
-    private boolean salesManExists(SalesMan salesman){
+    private boolean salesManExists(int sid){
 
-        return salesmenCollection.find(eq("sid", salesman.getId())).first() != null;
+        return salesmenCollection.find(eq("sid", sid)).first() != null;
     }
 
     private boolean recordExists(int sid, SocialPerformanceRecord record){
@@ -76,7 +75,7 @@ public class ManagePersonalImplementation implements ManagePersonal {
     @Override
     public void createSalesMan(SalesMan salesman) {
 
-        if(!salesManExists(salesman)) {
+        if(!salesManExists(salesman.getId())) {
             salesmenCollection.insertOne(salesman.toDocument());
         }
         else{
@@ -87,20 +86,19 @@ public class ManagePersonalImplementation implements ManagePersonal {
     @Override
     public void addSocialPerformanceRecord(SocialPerformanceRecord record, SalesMan salesMan) {
 
-        if(salesManExists(salesMan)) {
+        if(salesManExists(salesMan.getId())) {
 
             if(!recordExists(salesMan.getId(), record)){
 
-                SalesMan s = readSalesMan(salesMan.getId());
-                s.addPerformanceRecord(record);
-                salesmenCollection.replaceOne(eq("sid", s.getId()), s.toDocument());
+                Document update = new Document("$push", new Document("performanceRecords", record.toDocument()));
+                salesmenCollection.updateOne(eq("sid", salesMan.getId()), update);
             }
             else{
                 throw new ManagePersonalException("Performance Record for SalesMan already exists for year " + record.getYear());
             }
         }
         else{
-            throw new RuntimeException("SalesMan does not exist");
+            throw new ManagePersonalException("SalesMan does not exist");
         }
     }
 
@@ -114,15 +112,13 @@ public class ManagePersonalImplementation implements ManagePersonal {
 
     @Override
     public List<SalesMan> readAllSalesMen() {
+
         List<SalesMan> allSalesMen = new ArrayList<>();
 
-        try {
-            for (Document doc : salesmenCollection.find()) {
-                allSalesMen.add(documentToSalesMan(doc));
-            }
-        } catch (Exception e) {
-            System.err.println("Error reading all SalesMen: " + e.getMessage());
+        for (Document doc : salesmenCollection.find()) {
+            allSalesMen.add(documentToSalesMan(doc));
         }
+
         return allSalesMen;
 
     }
@@ -136,20 +132,39 @@ public class ManagePersonalImplementation implements ManagePersonal {
     @Override
     public void deleteSalesMan(int sid) {
 
-    }
+        if(salesManExists(sid)){
 
-    @Override
-    public void deleteAllSalesMen() {
-
+            salesmenCollection.deleteOne(eq("sid", sid));
+        }
+        else{
+            throw new ManagePersonalException("SalesMan does not exist");
+        }
     }
 
     @Override
     public void deleteRecord(int sid, int year) {
+        if (salesManExists(sid)) {
 
+            Document pull = new Document("performanceRecords", eq("year", year));
+            Document update = new Document("$pull", pull);
+
+            salesmenCollection.updateOne(eq("sid", sid), update);
+        } else {
+            throw new ManagePersonalException("SalesMan does not exist");
+        }
     }
 
     @Override
-    public void deleteAllRecords(int sid) {
+    public void deleteAllRecordsBySalesMan(int sid) {
+
+        if (salesManExists(sid)) {
+
+            Document update = new Document("$set", new Document("performanceRecords", new ArrayList<>()));
+            salesmenCollection.updateOne(eq("sid", sid), update);
+        } else {
+            throw new ManagePersonalException("SalesMan does not exist");
+        }
 
     }
+
 }

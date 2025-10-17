@@ -7,12 +7,8 @@ public class Main {
 
         try {
             ManagePersonalImplementation manager = new ManagePersonalImplementation();
-            SalesMan martin = new SalesMan("Martin", "Braun", 5);
 
-            manager.createSalesMan(martin);
-            SocialPerformanceRecord record = new SocialPerformanceRecord(50,5,2026,50);
-
-            manager.addSocialPerformanceRecord(record, martin);
+            manager.deleteSalesMan(5);
         }
         catch(ManagePersonalException e){
             System.out.println(e.getMessage());

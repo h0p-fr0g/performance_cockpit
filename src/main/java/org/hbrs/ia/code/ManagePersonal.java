@@ -25,10 +25,8 @@ public interface ManagePersonal {
 
     public void deleteSalesMan( int sid );
 
-    public void deleteAllSalesMen();
-
     public void deleteRecord(int sid, int year);
 
-    public void deleteAllRecords(int sid);
+    public void deleteAllRecordsBySalesMan(int sid);
 
 }
