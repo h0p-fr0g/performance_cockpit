@@ -1,0 +1,36 @@
+Team-Members:
+
+Martin Braun
+Patrick Saft
+Alysson Teixeira
+
+
+a) 
+
+Our repository can be found under this url: ...
+
+b)
+
+The interface doesn't fulfill the CRUD pattern. C(reate) and R(ead) are given but there are no operations for updating and deleting.
+
+Examples for update-methods would be:
+
+- public void updateSalesMan(int sid)
+- public void updateSalesManFirstname(int sid, String firstname)
+- public void updateSocialPerformanceRecordScore(int sid, int year, int score)
+
+We've included the following delete-methods:
+
+- public void deleteSalesMan( int sid )
+- public void deleteRecord(int sid, int year)
+- public void deleteAllRecordsBySalesMan(int sid)
+
+We didn't include bulk-delete-methods like
+
+- public void deleteAllSalesMan()
+- public void deleteAllRecords()
+
+because these operations are too powerful and pose an unacceptable risk of data loss in a production environment.
+
+c)
+tbd
