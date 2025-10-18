@@ -1,6 +1,6 @@
 import org.hbrs.ia.code.ManagePersonal;
 import org.hbrs.ia.code.ManagePersonalException;
-import org.hbrs.ia.code.ManagePersonalImplementation;
+import org.hbrs.ia.code.ManagePersonalRemote;
 
 public class Main {
 
@@ -10,7 +10,7 @@ public class Main {
 
         try {
 
-            manager = new ManagePersonalImplementation();
+            manager = new ManagePersonalRemote();
             manager.deleteSalesMan(5);
 
         }

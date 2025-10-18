@@ -2,7 +2,7 @@ package org.hbrs.mongodb.test;
 
 import org.hbrs.ia.code.ManagePersonal;
 import org.hbrs.ia.code.ManagePersonalException;
-import org.hbrs.ia.code.ManagePersonalImplementation;
+import org.hbrs.ia.code.ManagePersonalLocal;
 import org.hbrs.ia.model.SalesMan;
 import org.hbrs.ia.model.SocialPerformanceRecord;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ public class ManagePersonalTest {
 
     @BeforeEach
     void setup() {
-        manager = new ManagePersonalImplementation();
+        manager = new ManagePersonalLocal();
     }
 
     @Test

@@ -1,9 +1,7 @@
 package org.hbrs.ia.code;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 
 
 import java.util.ArrayList;
@@ -17,23 +15,23 @@ import org.hbrs.ia.model.SocialPerformanceRecord;
 import static com.mongodb.client.model.Filters.eq;
 
 
-public class ManagePersonalImplementation implements ManagePersonal {
+abstract class ManagePersonalImplementation implements ManagePersonal {
 
-    private final MongoClient client;
-    private final MongoCollection<Document> salesmenCollection;
-    private static final String DATABASE_NAME = "Database";
-    private static final String SALESMEN_COLLECTION_NAME = "salesmen";
+    protected final MongoClient clientLocal;
+    protected final com.mongodb.client.MongoClient clientRemote;
+    protected final MongoCollection<Document> salesmenCollection;
+    protected static final String DATABASE_NAME = "Database";
+    protected static final String SALESMEN_COLLECTION_NAME = "salesmen";
 
-    public ManagePersonalImplementation() {
-
-        try {
-            this.client = MongoClients.create(System.getenv("MONGO_URL"));
-            MongoDatabase database = client.getDatabase(DATABASE_NAME);
-            this.salesmenCollection = database.getCollection(SALESMEN_COLLECTION_NAME);
-        }
-        catch (Exception e) {
-            throw new ManagePersonalException("Error connecting to MongoDB: " + e.getMessage());
-        }
+    public ManagePersonalImplementation(MongoClient client) {
+        this.clientLocal = client;
+        this.clientRemote = null;
+        this.salesmenCollection = this.clientLocal.getDatabase(DATABASE_NAME).getCollection(SALESMEN_COLLECTION_NAME);
+    }
+    public ManagePersonalImplementation(com.mongodb.client.MongoClient client) {
+        this.clientRemote = client;
+        this.clientLocal = null;
+        this.salesmenCollection = this.clientRemote.getDatabase(DATABASE_NAME).getCollection(SALESMEN_COLLECTION_NAME);
     }
 
     private SocialPerformanceRecord documentToPerformanceRecord(Document doc) {
@@ -179,7 +177,12 @@ public class ManagePersonalImplementation implements ManagePersonal {
 
     @Override
     public void close() {
-        client.close();
+        if(clientLocal != null) {
+            clientLocal.close();
+        }
+        if(clientRemote != null) {
+            clientRemote.close();
+        }
     }
 
 }
