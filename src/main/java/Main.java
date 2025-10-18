@@ -1,9 +1,12 @@
+import org.hbrs.ia.code.ManagePersonal;
+import org.hbrs.ia.code.ManagePersonalException;
+import org.hbrs.ia.code.ManagePersonalImplementation;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        ManagePersonalImplementation manager = null;
+        ManagePersonal manager = null;
 
         try {
 
