@@ -1,3 +1,5 @@
+package org.hbrs.ia.code;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -9,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bson.Document;
-import org.hbrs.ia.code.ManagePersonal;
 import org.hbrs.ia.model.SalesMan;
 import org.hbrs.ia.model.SocialPerformanceRecord;
 
@@ -41,7 +42,12 @@ public class ManagePersonalImplementation implements ManagePersonal {
                 doc.getInteger("id"),
                 doc.getInteger("salesman"),
                 doc.getInteger("year"),
-                doc.getInteger("socialScore")
+                doc.getInteger("leadershipCompetence"),
+                doc.getInteger("openessEmployees"),
+                doc.getInteger("socialBehaviour"),
+                doc.getInteger("attitudeClient"),
+                doc.getInteger("communication"),
+                doc.getInteger("integrity")
         );
     }
 
@@ -104,6 +110,9 @@ public class ManagePersonalImplementation implements ManagePersonal {
 
     @Override
     public SalesMan readSalesMan(int sid) {
+        if(!salesManExists(sid)){
+            throw new ManagePersonalException("SalesMan does not exist");
+        }
 
         Document d = salesmenCollection.find(eq("sid", sid)).first();
         if (d == null) return null;
@@ -112,7 +121,6 @@ public class ManagePersonalImplementation implements ManagePersonal {
 
     @Override
     public List<SalesMan> readAllSalesMen() {
-
         List<SalesMan> allSalesMen = new ArrayList<>();
 
         for (Document doc : salesmenCollection.find()) {
@@ -125,6 +133,9 @@ public class ManagePersonalImplementation implements ManagePersonal {
 
     @Override
     public List<SocialPerformanceRecord> readSocialPerformanceRecord(SalesMan salesMan) {
+        if(!salesManExists(salesMan.getId())){
+            throw new ManagePersonalException("SalesMan does not exist");
+        }
 
         return readSalesMan(salesMan.getId()).getPerformanceRecords();
     }
