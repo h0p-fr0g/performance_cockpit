@@ -1,5 +1,3 @@
-import org.hbrs.ia.model.SalesMan;
-import org.hbrs.ia.model.SocialPerformanceRecord;
 
 public class Main {
 
@@ -9,6 +7,8 @@ public class Main {
             ManagePersonalImplementation manager = new ManagePersonalImplementation();
 
             manager.deleteSalesMan(5);
+
+            manager.close();
         }
         catch(ManagePersonalException e){
             System.out.println(e.getMessage());

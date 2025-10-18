@@ -50,7 +50,7 @@ public class ManagePersonalImplementation implements ManagePersonal {
         List<Document> performanceDocs = doc.getList("performanceRecords", Document.class);
 
         List<SocialPerformanceRecord> performanceRecords = performanceDocs.stream()
-                .map(this::documentToPerformanceRecord) // Use the helper method for conversion
+                .map(this::documentToPerformanceRecord)
                 .collect(Collectors.toList());
 
         return new SalesMan(
@@ -164,7 +164,11 @@ public class ManagePersonalImplementation implements ManagePersonal {
         } else {
             throw new ManagePersonalException("SalesMan does not exist");
         }
+    }
 
+    @Override
+    public void close() {
+        client.close();
     }
 
 }

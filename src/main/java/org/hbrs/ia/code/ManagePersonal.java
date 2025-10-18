@@ -29,4 +29,6 @@ public interface ManagePersonal {
 
     public void deleteAllRecordsBySalesMan(int sid);
 
+
+    void close();
 }
