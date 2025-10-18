@@ -1,13 +1,9 @@
 package org.hbrs.ia.code;
 
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.bson.Document;
 import org.hbrs.ia.model.SalesMan;
 import org.hbrs.ia.model.SocialPerformanceRecord;
@@ -17,21 +13,14 @@ import static com.mongodb.client.model.Filters.eq;
 
 abstract class ManagePersonalImplementation implements ManagePersonal {
 
-    protected final MongoClient clientLocal;
-    protected final com.mongodb.client.MongoClient clientRemote;
+    protected final GenericMongoClient client;
     protected final MongoCollection<Document> salesmenCollection;
     protected static final String DATABASE_NAME = "Database";
     protected static final String SALESMEN_COLLECTION_NAME = "salesmen";
 
-    public ManagePersonalImplementation(MongoClient client) {
-        this.clientLocal = client;
-        this.clientRemote = null;
-        this.salesmenCollection = this.clientLocal.getDatabase(DATABASE_NAME).getCollection(SALESMEN_COLLECTION_NAME);
-    }
-    public ManagePersonalImplementation(com.mongodb.client.MongoClient client) {
-        this.clientRemote = client;
-        this.clientLocal = null;
-        this.salesmenCollection = this.clientRemote.getDatabase(DATABASE_NAME).getCollection(SALESMEN_COLLECTION_NAME);
+    public ManagePersonalImplementation(GenericMongoClient client) {
+        this.client = client;
+        this.salesmenCollection = this.client.getCollection(DATABASE_NAME, SALESMEN_COLLECTION_NAME);
     }
 
     private SocialPerformanceRecord documentToPerformanceRecord(Document doc) {
@@ -177,12 +166,7 @@ abstract class ManagePersonalImplementation implements ManagePersonal {
 
     @Override
     public void close() {
-        if(clientLocal != null) {
-            clientLocal.close();
-        }
-        if(clientRemote != null) {
-            clientRemote.close();
-        }
+        this.client.close();
     }
 
 }
