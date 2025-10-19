@@ -33,4 +33,5 @@ We didn't include bulk-delete-methods like
 because these operations are too powerful and pose an unacceptable risk of data loss in a production environment.
 
 c)
-tbd
+
+Tests are implemented in the ManagePersonalTest - Class withing the test package.
