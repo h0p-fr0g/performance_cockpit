@@ -1,11 +1,14 @@
 package org.hbrs.ia.code;
 
-import com.mongodb.MongoClient;
+public class ManagePersonalLocal extends ManagePersonalAbstract {
+    // note: bevor running the application
+    // make sure you are running a mongod instance in the same directory as the application
+    // >> mongod --dbpath data/db
 
-public class ManagePersonalLocal extends ManagePersonalImplementation {
+    private static final Integer PORT = 27017;
 
     public ManagePersonalLocal() {
-        super(new MongoClient("localhost", 27017));
+        super("mongodb://localhost:"+ PORT +"/");
     }
 
 }

@@ -1,5 +1,7 @@
 package org.hbrs.ia.code;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,16 +13,16 @@ import org.hbrs.ia.model.SocialPerformanceRecord;
 import static com.mongodb.client.model.Filters.eq;
 
 
-abstract class ManagePersonalImplementation implements ManagePersonal {
+abstract class ManagePersonalAbstract implements ManagePersonal {
 
-    protected final GenericMongoClient client;
-    protected final MongoCollection<Document> salesmenCollection;
-    protected static final String DATABASE_NAME = "Database";
-    protected static final String SALESMEN_COLLECTION_NAME = "salesmen";
+    private final MongoClient client;
+    private final MongoCollection<Document> salesmenCollection;
+    private static final String DATABASE_NAME = "Database";
+    private static final String SALESMEN_COLLECTION_NAME = "salesmen";
 
-    public ManagePersonalImplementation(GenericMongoClient client) {
-        this.client = client;
-        this.salesmenCollection = this.client.getCollection(DATABASE_NAME, SALESMEN_COLLECTION_NAME);
+    public ManagePersonalAbstract(String connectinoString) {
+        this.client = MongoClients.create(connectinoString);
+        this.salesmenCollection = this.client.getDatabase(DATABASE_NAME).getCollection(SALESMEN_COLLECTION_NAME);
     }
 
     private SocialPerformanceRecord documentToPerformanceRecord(Document doc) {
@@ -55,44 +57,36 @@ abstract class ManagePersonalImplementation implements ManagePersonal {
     }
 
     private boolean salesManExists(int sid){
-
         return salesmenCollection.find(eq("sid", sid)).first() != null;
     }
 
     private boolean recordExists(int sid, SocialPerformanceRecord record){
-
         SalesMan s = readSalesMan(sid);
         return s.getPerformanceRecordByYear(record.getYear()) != null;
     }
 
     @Override
     public void createSalesMan(SalesMan salesman) {
-
-        if(!salesManExists(salesman.getId())) {
-            salesmenCollection.insertOne(salesman.toDocument());
-        }
-        else{
+        if(salesManExists(salesman.getId())) {
             throw new ManagePersonalException("SalesMan-ID already exists");
         }
+        salesmenCollection.insertOne(salesman.toDocument());
     }
 
     @Override
     public void addSocialPerformanceRecord(SocialPerformanceRecord record, SalesMan salesMan) {
-
-        if(salesManExists(salesMan.getId())) {
-
-            if(!recordExists(salesMan.getId(), record)){
-
-                Document update = new Document("$push", new Document("performanceRecords", record.toDocument()));
-                salesmenCollection.updateOne(eq("sid", salesMan.getId()), update);
-            }
-            else{
-                throw new ManagePersonalException("Performance Record for SalesMan already exists for year " + record.getYear());
-            }
-        }
-        else{
+        if(!salesManExists(salesMan.getId())) {
             throw new ManagePersonalException("SalesMan does not exist");
         }
+        if(recordExists(salesMan.getId(), record)){
+            throw new ManagePersonalException("Performance Record for SalesMan already exists for year " + record.getYear());
+        }
+        Document update = new Document("$push", new Document("performanceRecords", record.toDocument()));
+        salesmenCollection.updateOne(eq("sid", salesMan.getId()), update);
+
+        //
+        // import static com.mongodb.client.model.Updates.* // importing set, pull etc
+        // salesman.updateOne( eq(SalesMan.Constants.SID, salesMan.getId()), pushEach( SocialPerformanceRecord.Constants.KEY_OF_RECORD, Array.asList()))
     }
 
     @Override
@@ -130,38 +124,31 @@ abstract class ManagePersonalImplementation implements ManagePersonal {
     @Override
     public void deleteSalesMan(int sid) {
 
-        if(salesManExists(sid)){
-
-            salesmenCollection.deleteOne(eq("sid", sid));
-        }
-        else{
+        if(!salesManExists(sid)){
             throw new ManagePersonalException("SalesMan does not exist");
         }
+        salesmenCollection.deleteOne(eq("sid", sid));
     }
 
     @Override
     public void deleteRecord(int sid, int year) {
-        if (salesManExists(sid)) {
-
-            Document pull = new Document("performanceRecords", eq("year", year));
-            Document update = new Document("$pull", pull);
-
-            salesmenCollection.updateOne(eq("sid", sid), update);
-        } else {
+        if (!salesManExists(sid)) {
             throw new ManagePersonalException("SalesMan does not exist");
         }
+        Document pull = new Document("performanceRecords", eq("year", year));
+        Document update = new Document("$pull", pull);
+
+        salesmenCollection.updateOne(eq("sid", sid), update);
     }
 
     @Override
     public void deleteAllRecordsBySalesMan(int sid) {
-
-        if (salesManExists(sid)) {
-
-            Document update = new Document("$set", new Document("performanceRecords", new ArrayList<>()));
-            salesmenCollection.updateOne(eq("sid", sid), update);
-        } else {
+        if (!salesManExists(sid)) {
             throw new ManagePersonalException("SalesMan does not exist");
         }
+
+        Document update = new Document("$set", new Document("performanceRecords", new ArrayList<>()));
+        salesmenCollection.updateOne(eq("sid", sid), update);
     }
 
     @Override

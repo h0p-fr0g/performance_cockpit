@@ -1,10 +1,10 @@
 package org.hbrs.ia.code;
 
-import com.mongodb.client.MongoClients;
-
-public class ManagePersonalRemote extends ManagePersonalImplementation {
+public class ManagePersonalRemote extends ManagePersonalAbstract {
+    // note: bevor running the application
+    // set the environment variable MONGO_URL to the connectionstring of your database
 
     public ManagePersonalRemote() {
-        super(MongoClients.create(System.getenv("MONGO_URL")));
+        super(System.getenv("MONGO_URL"));
     }
 }
