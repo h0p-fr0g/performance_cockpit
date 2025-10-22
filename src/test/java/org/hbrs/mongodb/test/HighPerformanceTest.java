@@ -1,37 +1,46 @@
 package org.hbrs.mongodb.test;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+
 import org.hbrs.ia.model.SalesMan;
 import org.bson.Document;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import io.github.cdimascio.dotenv.Dotenv;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HighPerformanceTest {
 
-    private MongoClient client;
+    private  static MongoClient client;
     private MongoDatabase supermongo;
     private MongoCollection<Document> salesmen;
 
-    /**
-     * Attention: You might update the version of the Driver
-     * for newer version of MongoDB!
-     * This tests run with MongoDB 4.2.17 Community
-     */
+    // Load the .env file
+    static Dotenv dotenv = Dotenv.load();
+    static String db_uri = dotenv.get("DB_URI");
+    static String db_test = dotenv.get("DB_TEST");
+
+    @BeforeAll
+    static void open() {
+        client = MongoClients.create(db_uri);
+    }
+
+    @AfterAll
+    static void close() {
+        if (client != null) client.close();
+    }
+
     @BeforeEach
     void setUp() {
-        // Setting up the connection to a local MongoDB with standard port 27017
-        // must be started within a terminal with command 'mongod'.
-        client = new MongoClient("localhost", 27017);
-
-        // Get database 'highperformance' (creates one if not available)
-        supermongo = client.getDatabase("highperformanceNewTest");
-
-        // Get Collection 'salesmen' (creates one if not available)
+        supermongo = client.getDatabase(db_test);
         salesmen = supermongo.getCollection("salesmen");
+        salesmen.drop(); //making sure to start clean
     }
 
     @Test
@@ -53,7 +62,6 @@ class HighPerformanceTest {
         Integer sid = (Integer) newDocument.get("sid");
         assertEquals( 90133 , sid );
 
-        // Deletion
         salesmen.drop();
     }
 
@@ -75,7 +83,6 @@ class HighPerformanceTest {
         Integer sid = (Integer) newDocument.get("sid");
         assertEquals( 90444 , sid );
 
-        // Deletion
         salesmen.drop();
     }
 }

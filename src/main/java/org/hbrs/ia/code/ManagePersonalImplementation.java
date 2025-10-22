@@ -21,21 +21,14 @@ public class ManagePersonalImplementation implements ManagePersonal {
 
     private final MongoClient client;
     private final MongoCollection<Document> salesmenCollection;
-    private static final String DATABASE_NAME = "Database";
     private static final String SALESMEN_COLLECTION_NAME = "salesmen";
 
-    public ManagePersonalImplementation() {
-
-        try {
-            this.client = MongoClients.create(System.getenv("MONGO_URL"));
-            MongoDatabase database = client.getDatabase(DATABASE_NAME);
-            this.salesmenCollection = database.getCollection(SALESMEN_COLLECTION_NAME);
-        }
-        catch (Exception e) {
-            throw new ManagePersonalException("Error connecting to MongoDB: " + e.getMessage());
-        }
+    public ManagePersonalImplementation(MongoClient client, String dbName) {
+        this.client = client;
+        MongoDatabase database = client.getDatabase(dbName);
+        this.salesmenCollection = database.getCollection(SALESMEN_COLLECTION_NAME);
     }
-
+    
     private SocialPerformanceRecord documentToPerformanceRecord(Document doc) {
 
         return new SocialPerformanceRecord(

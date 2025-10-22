@@ -7,16 +7,24 @@ import org.hbrs.ia.model.SalesMan;
 import org.hbrs.ia.model.SocialPerformanceRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import io.github.cdimascio.dotenv.Dotenv;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ManagePersonalTest {
 
     private ManagePersonal manager;
+    private MongoClient client;
+    Dotenv dotenv = Dotenv.load();
 
     @BeforeEach
     void setup() {
-        manager = new ManagePersonalImplementation();
+        String db_uri = dotenv.get("DB_URI");
+        String db_test = dotenv.get("DB_TEST");
+        this.client = MongoClients.create(db_uri);
+        manager = new ManagePersonalImplementation(client, db_test);
     }
 
     @Test
